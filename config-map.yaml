@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map
+  namespace: bookndrive-dev
+data:
+  sender-user: ayman63.aboueloula@gmail.com
+  sender-host: smtp.gmail.com

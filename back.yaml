@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: back-deployment
+  namespace: bookndrive-dev
+  labels:
+    app: back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: back
+  template:
+    metadata:
+      labels:
+        app: back
+    spec:
+      containers:
+        - name: back
+          image: 301999/back:1.0-SNAPSHOT
+          ports:
+            - containerPort: 8088
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: secret-map
+                  key: mongo-uri
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: secret-map
+                  key: secret-key
+            - name: SENDER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-map
+                  key: sender-pwd
+            - name: SENDER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map
+                  key: sender-host
+            - name: SENDER_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map
+                  key: sender-user
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-service
+  namespace: bookndrive-dev
+spec:
+  selector:
+    app: back
+  ports:
+    - protocol: TCP
+      port: 8088
+      targetPort: 8088
